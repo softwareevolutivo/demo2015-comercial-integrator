@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sy:switchyard xmlns:bean="urn:switchyard-component-bean:config:1.1" xmlns:resteasy="urn:switchyard-component-resteasy:config:1.1" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" xmlns:sy="urn:switchyard-config:switchyard:1.1" name="comercial-integrador" targetNamespace="urn:ec.com.se.demo2015:comercial-integrador:1.0">
+  <sca:composite name="comercial-integrador" targetNamespace="urn:ec.com.se.demo2015:comercial-integrador:1.0">
+    <sca:component name="ComercialBean">
+      <bean:implementation.bean class="ec.com.se.demo2015.comercial.ComercialBean"/>
+      <sca:service name="Comercial">
+        <sca:interface.java interface="ec.com.se.demo2015.comercial.Comercial"/>
+      </sca:service>
+    </sca:component>
+    <sca:service name="Comercial" promote="ComercialBean/Comercial">
+      <sca:interface.java interface="ec.com.se.demo2015.comercial.Comercial"/>
+      <resteasy:binding.rest name="rest1">
+        <resteasy:interfaces>ec.com.se.demo2015.comercial.ComercialResource</resteasy:interfaces>
+        <resteasy:contextPath>comercial</resteasy:contextPath>
+      </resteasy:binding.rest>
+    </sca:service>
+  </sca:composite>
+</sy:switchyard>
