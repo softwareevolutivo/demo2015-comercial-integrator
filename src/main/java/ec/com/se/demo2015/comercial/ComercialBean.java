@@ -47,7 +47,7 @@ public class ComercialBean implements Comercial {
 			for (OrdenCompraDetalle detalle : ordenCompra.getDetalles()) {
 				ps = conn
 						.prepareStatement(
-								"insert into orden_compra_detalles (id_orden_compra,sku1_producto, cantidad, valor_unitario) values (?,?,?,?)",
+								"insert into orden_compra_detalles (id_orden_compra,sku_producto, cantidad, valor_unitario) values (?,?,?,?)",
 								Statement.RETURN_GENERATED_KEYS);
 				ps.setLong(1, ordenCompraId);
 				ps.setString(2, detalle.getSkuProducto());
