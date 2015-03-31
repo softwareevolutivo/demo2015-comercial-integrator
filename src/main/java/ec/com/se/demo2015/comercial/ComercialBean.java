@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -79,6 +81,43 @@ public class ComercialBean implements Comercial {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public List<Cliente> getClientes() throws ComercialIntegratorException {
+		List<Cliente> clientes = new ArrayList<Cliente>();
+		Connection conn = null;
+		Statement ps = null;
+		ResultSet rs = null;
+		try {
+
+			conn = comercialDS.getConnection();
+			ps = conn
+					.createStatement();
+			rs = ps.executeQuery("select * from clientes");
+			while (rs.next()) {
+				Cliente cliente = new Cliente();
+				cliente.setIdentificacion(rs.getString(1));
+				cliente.setNombre(rs.getString(2));
+				cliente.setDireccion(rs.getString(3));
+				cliente.setTelefono(rs.getString(4));
+				clientes.add(cliente);
+			}
+			rs.close();
+			ps.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new ComercialIntegratorException(e.getMessage());
+		} finally {
+			try {
+				if (null != conn)
+					conn.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return clientes;
 	}
 
 }
