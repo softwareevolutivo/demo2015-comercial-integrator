@@ -7,4 +7,7 @@ public interface Comercial {
 			throws ComercialIntegratorException;
 
 	public List<Cliente> getClientes() throws ComercialIntegratorException;
+
+	public OrdenCompra getOrdenCompra(Long ordenCompraId)
+			throws ComercialIntegratorException;
 }

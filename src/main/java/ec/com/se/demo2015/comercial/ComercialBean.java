@@ -92,8 +92,7 @@ public class ComercialBean implements Comercial {
 		try {
 
 			conn = comercialDS.getConnection();
-			ps = conn
-					.createStatement();
+			ps = conn.createStatement();
 			rs = ps.executeQuery("select * from clientes");
 			while (rs.next()) {
 				Cliente cliente = new Cliente();
@@ -118,6 +117,59 @@ public class ComercialBean implements Comercial {
 			}
 		}
 		return clientes;
+	}
+
+	@Override
+	public OrdenCompra getOrdenCompra(Long ordenCompraId)
+			throws ComercialIntegratorException {
+		OrdenCompra ordenCompra = new OrdenCompra();
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+
+			conn = comercialDS.getConnection();
+			ps = conn
+					.prepareStatement("select * from ordenes_compra where id = ?");
+			ps.setLong(1, ordenCompraId);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				ordenCompra.setId(rs.getLong(1));
+				Cliente cliente = new Cliente();
+				cliente.setIdentificacion(rs.getString(2));
+				ordenCompra.setCliente(cliente);
+				ordenCompra.setFecha(rs.getDate(3));
+			}
+			rs.close();
+			ps.close();
+
+			ps = conn
+					.prepareStatement("select * from orden_compra_detalles where id_orden_compra = ?");
+			ps.setLong(1, ordenCompraId);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				OrdenCompraDetalle detalle = new OrdenCompraDetalle();
+				detalle.setId(rs.getLong(1));
+				detalle.setSkuProducto(rs.getString(3));
+				detalle.setCantidad(rs.getInt(4));
+				detalle.setValorUnitario(rs.getDouble(5));
+				ordenCompra.getDetalles().add(detalle);
+			}
+			rs.close();
+			ps.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new ComercialIntegratorException(e.getMessage());
+		} finally {
+			try {
+				if (null != conn)
+					conn.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return ordenCompra;
 	}
 
 }
