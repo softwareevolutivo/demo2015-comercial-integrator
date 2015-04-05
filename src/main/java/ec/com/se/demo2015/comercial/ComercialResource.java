@@ -25,4 +25,9 @@ public interface ComercialResource {
 	@Path("ordenCompra/{id}")
 	@Produces({ "application/json; charset=UTF-8" })
 	public OrdenCompra getOrdenCompra(@PathParam("id") long ordenCompraId);
+
+	@GET
+	@Path("ordenesCompra")
+	@Produces({ "application/json; charset=UTF-8" })
+	public List<OrdenCompra> getOrdenesCompra();
 }

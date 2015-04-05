@@ -172,4 +172,50 @@ public class ComercialBean implements Comercial {
 		return ordenCompra;
 	}
 
+	@Override
+	public List<OrdenCompra> getOrdenesCompra()
+			throws ComercialIntegratorException {
+		List<OrdenCompra> ordenesCompra = new ArrayList<OrdenCompra>();
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+
+			conn = comercialDS.getConnection();
+			ps = conn
+					.prepareStatement(""
+							+ "select "
+							+ "oc.id, c.nombre, oc.fecha, "
+							+ "coalesce(sum(ocd.valor_unitario*ocd.cantidad),0) as valor "
+							+ "from ordenes_compra oc inner join clientes c on oc.identificacion_cliente = c.identificacion "
+							+ "left outer join orden_compra_detalles ocd on ocd.id_orden_compra = oc.id "
+							+ "group by oc.id, c.nombre, oc.fecha "
+							+ "order by 1,3,2");
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				OrdenCompra ordenCompra = new OrdenCompra();
+				ordenCompra.setId(rs.getLong(1));
+				Cliente cliente = new Cliente();
+				cliente.setIdentificacion(rs.getString(2));
+				ordenCompra.setCliente(cliente);
+				ordenCompra.setFecha(rs.getDate(3));
+				ordenesCompra.add(ordenCompra);
+			}
+			rs.close();
+			ps.close();
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new ComercialIntegratorException(e.getMessage());
+		} finally {
+			try {
+				if (null != conn)
+					conn.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return ordenesCompra;
+	}
+
 }
