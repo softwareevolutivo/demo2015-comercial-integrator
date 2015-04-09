@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -21,10 +23,11 @@ public class ComercialBean implements Comercial {
 	private DataSource comercialDS;
 
 	@Override
-	public boolean crearOrden(OrdenCompra ordenCompra)
+	public Long createOrden(OrdenCompra ordenCompra)
 			throws ComercialIntegratorException {
 		Connection conn = null;
 		PreparedStatement ps = null;
+		Long ordenCompraId = null;
 		try {
 
 			conn = comercialDS.getConnection();
@@ -41,7 +44,7 @@ public class ComercialBean implements Comercial {
 			}
 			ResultSet rs = ps.getGeneratedKeys();
 			rs.next();
-			Long ordenCompraId = rs.getLong(1);
+			ordenCompraId = rs.getLong(1);
 			System.out.println("OrdenCompra id -> " + ordenCompraId);
 			rs.close();
 			ps.close();
@@ -80,7 +83,7 @@ public class ComercialBean implements Comercial {
 				e1.printStackTrace();
 			}
 		}
-		return false;
+		return ordenCompraId;
 	}
 
 	@Override
@@ -173,9 +176,9 @@ public class ComercialBean implements Comercial {
 	}
 
 	@Override
-	public List<OrdenCompra> getOrdenesCompra()
+	public List<Map<String, Object>> getOrdenesCompra()
 			throws ComercialIntegratorException {
-		List<OrdenCompra> ordenesCompra = new ArrayList<OrdenCompra>();
+		List<Map<String, Object>> ordenesCompra = new ArrayList<Map<String, Object>>();
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -193,13 +196,12 @@ public class ComercialBean implements Comercial {
 							+ "order by 1,3,2");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				OrdenCompra ordenCompra = new OrdenCompra();
-				ordenCompra.setId(rs.getLong(1));
-				Cliente cliente = new Cliente();
-				cliente.setIdentificacion(rs.getString(2));
-				ordenCompra.setCliente(cliente);
-				ordenCompra.setFecha(rs.getDate(3));
-				ordenesCompra.add(ordenCompra);
+				Map<String, Object> registro = new HashMap<String, Object>();
+				registro.put("id", rs.getLong(1));
+				registro.put("nombre", rs.getString(2));
+				registro.put("fecha", rs.getDate(3));
+				registro.put("valor", rs.getDouble(4));
+				ordenesCompra.add(registro);
 			}
 			rs.close();
 			ps.close();
@@ -217,5 +219,4 @@ public class ComercialBean implements Comercial {
 		}
 		return ordenesCompra;
 	}
-
 }

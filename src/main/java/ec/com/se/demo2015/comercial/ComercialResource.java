@@ -1,6 +1,7 @@
 package ec.com.se.demo2015.comercial;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -14,7 +15,8 @@ public interface ComercialResource {
 	@Path("crear")
 	@POST
 	@Consumes({ "application/json; charset=UTF-8" })
-	public boolean crearOrden(OrdenCompra ordenCompra);
+	@Produces({ "application/json; charset=UTF-8" })
+	public Long createOrden(OrdenCompra ordenCompra);
 
 	@GET
 	@Path("clientes")
@@ -29,5 +31,5 @@ public interface ComercialResource {
 	@GET
 	@Path("ordenesCompra")
 	@Produces({ "application/json; charset=UTF-8" })
-	public List<OrdenCompra> getOrdenesCompra();
+	public List<Map<String, Object>> getOrdenesCompra();
 }
