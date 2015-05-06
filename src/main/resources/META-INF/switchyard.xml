@@ -10,6 +10,7 @@
     <sca:service name="Comercial" promote="ComercialBean/Comercial">
       <sca:interface.java interface="ec.com.se.demo2015.comercial.Comercial"/>
       <resteasy:binding.rest name="rest1">
+        <resteasy:contextMapper class="ec.com.se.demo2015.comercial.CorsRESTEasyContextMapper"/>
         <resteasy:messageComposer class="ec.com.se.demo2015.comercial.SEComposer"/>
         <resteasy:interfaces>ec.com.se.demo2015.comercial.ComercialResource</resteasy:interfaces>
         <resteasy:contextPath>comercial</resteasy:contextPath>
